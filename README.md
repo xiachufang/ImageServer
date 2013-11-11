@@ -31,5 +31,5 @@ Setup
 
 2. Run Server
 
-        python app.js
+        python app.py
 
