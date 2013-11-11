@@ -53,6 +53,7 @@ def resize_image(ident):
     app.logger.debug('resize /image/%s', ident)
     size_str = request.form.get('sizes', '').strip()
     sizes = [xy.split('x') for xy in size_str.split(',') if xy]
+    app.logger.debug('sizes: %s', sizes)
     image_binary = beans.get(ident)
     if not image_binary:
         return error('Image corresponding to %s does\'n exist!' % ident)

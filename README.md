@@ -8,7 +8,20 @@ API
         Form:
           image: Image string
           sizes(optional): 100x50,150x<60
-            widthxheight or widthx<height
+
+          widthxheight or widthx<height
+
+        Response:
+        {
+            "content": {
+                "ident": "1c449b644ab111e3937900163e200a0a",
+                "sizes": [
+                    ["100", "50"],
+                    ["150", "<60"]
+                ]
+            },
+            "status": "ok"
+        }
 
 * `GET /image/<ident>.jpg` Visit image
 
@@ -18,9 +31,21 @@ API
 
 * `POST /image/<ident>.jpg` Resize image
 
-      Form:
-        sizes(optional): 100x50,150x<60
+        Form:
+          sizes(optional): 100x50,150x<60
+
           widthxheight or widthx<height
+
+        {
+            "content": {
+                "ident": "1c449b644ab111e3937900163e200a0a",
+                "sizes": [
+                    ["100", "50"],
+                    ["150", "<60"]
+                ]
+            },
+            "status": "ok"
+        }
 
 Setup
 -------
