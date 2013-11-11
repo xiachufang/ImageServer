@@ -36,6 +36,7 @@ API
 
           widthxheight or widthx<height
 
+        Response:
         {
             "content": {
                 "ident": "1c449b644ab111e3937900163e200a0a",
