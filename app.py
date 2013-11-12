@@ -114,7 +114,11 @@ def gen_ident():
     return uuid.uuid1().hex
 
 
-def compute_ident(ident, width, height=None):
+def compute_ident(ident, width=None, height=None):
+    if not height and not width:
+        # ident for original image
+        return ident
+
     if HEIGHT_IN_IDENT:
         if height and width:
             return '%s@%sx%s' % (ident, width, height)
