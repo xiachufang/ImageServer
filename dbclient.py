@@ -1,12 +1,11 @@
 #!/usr/bin/python
-import os.path, re, sys
-import time
 from random import shuffle
 
 try:
     from cmemcached import Client
 except:
     from memcache import Client
+
 
 def fnv1a(s):
     prime = 0x01000193
@@ -15,6 +14,7 @@ def fnv1a(s):
         h ^= ord(c)
         h = (h * prime) & 0xffffffff
     return h
+
 
 class MCStore(object):
     def __init__(self, server):
@@ -43,36 +43,38 @@ class MCStore(object):
 class WriteFailedError(Exception):
     def __init__(self, key):
         self.key = key
+
     def __repr__(self):
         return 'write %s failed' % self.key
 
 
 class Beansdb(object):
-    hash_space = 1<<32
+    hash_space = 1 << 32
     cached = True
+
     def __init__(self, servers, buckets_count=16, N=3, W=1, R=1):
         self.buckets_count = buckets_count
         self.bucket_size = self.hash_space / buckets_count
         self.servers = {}
         self.server_buckets = {}
         self.buckets = [[] for i in range(buckets_count)]
-        for s,bs in servers.items():
+        for s, bs in servers.items():
             server = MCStore(s)
             self.servers[s] = server
             self.server_buckets[s] = bs
             for b in bs:
                 self.buckets[b].append(server)
         for b in range(self.buckets_count):
-            self.buckets[b].sort(key=lambda x:fnv1a("%d:%s:%d"%(b,x,b)))
+            self.buckets[b].sort(key=lambda x: fnv1a("%d:%s:%d" % (b, x, b)))
         self.N = N
         self.W = W
         self.R = R
 
     def print_buckets(self):
-        for i,ss in enumerate(self.buckets):
-            print i,','.join(str(s) for s in ss)
-        for s,bs in self.server_buckets.items():
-            print s,len(bs)
+        for i, ss in enumerate(self.buckets):
+            print i, ','.join(str(s) for s in ss)
+        for s, bs in self.server_buckets.items():
+            print s, len(bs)
 
     def _get_servers(self, key):
         hash = fnv1a(key)
@@ -81,7 +83,7 @@ class Beansdb(object):
 
     def get(self, key):
         ss = self._get_servers(key)
-        for i,s in enumerate(ss):
+        for i, s in enumerate(ss):
             r = s.get(key)
             if r is not None:
                 # self heal
@@ -123,7 +125,7 @@ def _test():
     assert db.set(u, data)
     #assert db.exists(u)
     assert db.get(u) == data
-    assert db.get_multi([u]) == {u:data}
+    assert db.get_multi([u]) == {u: data}
     assert db.delete(u)
     assert db.get(u) is None
 

@@ -18,7 +18,7 @@ class ImageWrapper(object):
         self.im = picopen(im)
 
     def __getattr__(self, k):
-        return getattr(self.im, key)
+        return getattr(self.im, k)
 
     def to_string(self, quality=100):
         return img2str(self.im, quality=quality)
@@ -97,9 +97,10 @@ def resize_to(im, width, height=None, max_height=None):
 
 
 def pic_resize_width_cut_height_if_large(image, width, max_height=None):
-    if not image:return
-    if max_height == None:
-        max_height = width*2.5
+    if not image:
+        return
+    if max_height is None:
+        max_height = width * 2.5
 
     x, y = image.size
     if x != width:
@@ -114,7 +115,7 @@ def pic_resize_width_cut_height_if_large(image, width, max_height=None):
 
 def pic_fix_width(image, width, height=None):
     width0, height0 = image.size
-    if (width0, height0) == (width, height):   ##大小正好，不用处理
+    if (width0, height0) == (width, height):   # 大小正好，不用处理
         return image
     else:    ##按比例缩放到宽度为width
         r_height = height0 * width // width0
@@ -131,7 +132,7 @@ def pic_fix_width(image, width, height=None):
 
 
 def pic_fit(image, width, height=None):
-    if height == None:
+    if height is None:
         height = width
 
     x, y = image.size
