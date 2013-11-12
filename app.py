@@ -11,6 +11,7 @@ BEANSDBCFG = {
     "localhost:7902": range(16),
 }
 HOST = ''
+HEIGHT_IN_IDENT = False
 beans = Beansdb(BEANSDBCFG, 16)
 
 
@@ -20,14 +21,22 @@ def upload():
     size_str = request.form.get('sizes', '').strip()
     image = request.files.get('image')
     sizes = [xy.split('x') for xy in size_str.split(',') if xy]
-    app.logger.debug('upload params sizes: %s', sizes)
+    ident = request.form.get('ident', '').strip()
 
     try:
         im = ImageWrapper(image)
     except OpenImageException:
         return error('Not a valid image!')
 
-    ident = gen_ident()
+    if ident:
+        # Data contained in the key might be huge, so get the corresponing meta data.
+        if beans.get('?%s' % ident):
+            # if uploading to a specified ident, check wheather the ident has data in it first.
+            return error('Can not replace existing data')
+    else:
+        # generate an unique ident
+        ident = gen_ident()
+
     try:
         save_image_to_beansdb(im, ident, sizes)
     except WriteFailedError as e:
@@ -35,25 +44,35 @@ def upload():
     return ok({'ident': ident, 'sizes': sizes})
 
 
-@app.route('/image/<ident>.jpg')
-def pic_show(ident):
-    app.logger.debug('/image/%s', ident)
-    width = request.args.get('width')
-    height = request.args.get('height')
+@app.route('/image/<width>/<height>/<ident>.jpg')
+def pic_show(width, height, ident):
     ident_ = compute_ident(ident, width, height)
-    app.logger.debug('get %s', ident_)
+    if not ident_:
+        return error('Image corresponding to %s@%sx%s doesn\'t exist!' % (ident, width, height))
+    app.logger.debug('Beans get: %s', ident_)
     image_binary = beans.get(ident_)
     if not image_binary:
         return error('Image corresponding to %s@%sx%s doesn\'t exist!' % (ident, width, height))
     return Response(image_binary, mimetype='image/jpeg')
 
 
+@app.route('/image/<width>/<ident>.jpg')
+def pic_show3(width, ident):
+    return pic_show(width, None, ident)
+
+
+@app.route('/image/<ident>.jpg')
+def pic_shows(ident):
+    '''width and height are in query parameters'''
+    width = request.args.get('width')
+    height = request.args.get('height')
+    return pic_show(width, height, ident)
+
+
 @app.route('/image/<ident>.jpg', methods=['POST'])
 def resize_image(ident):
-    app.logger.debug('resize /image/%s', ident)
     size_str = request.form.get('sizes', '').strip()
     sizes = [xy.split('x') for xy in size_str.split(',') if xy]
-    app.logger.debug('sizes: %s', sizes)
     image_binary = beans.get(ident)
     if not image_binary:
         return error('Image corresponding to %s does\'n exist!' % ident)
@@ -74,7 +93,7 @@ def save_image_to_beansdb(im, ident, sizes=[]):
     '''
     # save the original image
     beans.set(ident, im.to_string())
-    app.logger.debug('set %s', ident)
+    app.logger.debug('Beans set %s', ident)
     if sizes:
         resize_and_save_image_to_beansdb(im, ident, sizes)
 
@@ -87,7 +106,7 @@ def resize_and_save_image_to_beansdb(im, ident, sizes=[]):
         computed_ident = compute_ident(ident, w, h)
         temp_im = im.resize_to(w, h)
         beans.set(computed_ident, temp_im.to_string())
-        app.logger.debug('set %s @%sx%s', computed_ident, w, h)
+        app.logger.debug('Beans set %s @%sx%s', computed_ident, w, h)
     return ident
 
 
@@ -95,10 +114,15 @@ def gen_ident():
     return uuid.uuid1().hex
 
 
-def compute_ident(ident, width, height):
-    if width and height:
-        return '%s/%sx%s' % (ident, width, height)
-    return ident
+def compute_ident(ident, width, height=None):
+    if HEIGHT_IN_IDENT:
+        if height and width:
+            return '%s@%sx%s' % (ident, width, height)
+        return ''
+
+    if width:
+        return '%s@%s' % (ident, width)
+    return ''
 
 
 def get_pic_url(ident):
