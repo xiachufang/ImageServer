@@ -28,7 +28,7 @@ class DevelopmentConfig(BaseConfig):
         'localhost:7902': range(16),
     }
     DEBUG = True
-    REDIS_SERVER = 'redis://localhost/0'
+    REDIS_SERVER = 'redis://localhost/3'
     BAIDUYUN = {
         'ak': 'access token',
         'sk': 'secret token',

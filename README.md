@@ -1,5 +1,31 @@
 ImageServer
 ===========
+Dependencies
+-----------
+ImageServer depends on `flask`, `celery`, `redis`, `PIL` and `Beansdb`. You should make sure those components avaliable before using ImageServer.
+
+
+Run
+-------
+1. You need to setup Beansdb before use ImageServer.
+
+        beansdb -p 7901 -d -P/tmp/beansdb1.pid -L/tmp/beansdb1.log -H /home/gfreezy/beans/db/db1 -vv
+        beansdb -p 7902 -d -P/tmp/beansdb2.pid -L/tmp/beansdb2.log -H /home/gfreezy/beans/db/db2 -vv
+
+2. Customize settings.
+
+    Rename `sample_config.py` to `config.py`.
+
+2. Run Server
+
+    Run the following commands in the directory of ImageServer.
+
+        $ python -m simpleserver.app
+
+    If you want ImageServer to auto synchronise your images to BaiduYun, start celery first. Run the command in a new shell.
+
+        $ celery worker -A simpleserver.init
+
 
 API
 --------
@@ -47,15 +73,3 @@ API
             },
             "status": "ok"
         }
-
-Setup
--------
-1. You need to setup Beansdb before use the service.
-
-        beansdb -p 7901 -d -P/tmp/beansdb1.pid -L/tmp/beansdb1.log -H /home/gfreezy/beans/db/db1 -vv
-        beansdb -p 7902 -d -P/tmp/beansdb2.pid -L/tmp/beansdb2.log -H /home/gfreezy/beans/db/db2 -vv
-
-2. Run Server
-
-        python app.py
-
