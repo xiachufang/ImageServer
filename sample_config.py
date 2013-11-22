@@ -10,15 +10,15 @@ class BaseConfig(object):
 
 class ProductionConfig(BaseConfig):
     BEANSDBCFG = {
-        'carrot:7901': range(16),
-        'onion:7902': range(16),
+        'localhost:7901': range(16),
+        'localhost:7902': range(16),
     }
     DEBUG = False
     REDIS_SERVER = 'redis://localhost/0'
     BAIDUYUN = {
-        'ak': '6bd064731412b390b865efe5ca25f602',
-        'sk': '8c36eb983b391b2a320ef782fbc192a3',
-        'bucket': 'xcfimg',
+        'ak': 'access token',
+        'sk': 'secret token',
+        'bucket': 'bucket',
     }
 
 
@@ -28,9 +28,9 @@ class DevelopmentConfig(BaseConfig):
         'localhost:7902': range(16),
     }
     DEBUG = True
-    REDIS_SERVER = 'redis://localhost/3'
+    REDIS_SERVER = 'redis://localhost/0'
     BAIDUYUN = {
-        'ak': '6bd064731412b390b865efe5ca25f602',
-        'sk': '8c36eb983b391b2a320ef782fbc192a3',
-        'bucket': 'xcfimg',
+        'ak': 'access token',
+        'sk': 'secret token',
+        'bucket': 'bucket',
     }
