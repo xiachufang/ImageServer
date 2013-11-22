@@ -1,7 +1,8 @@
 from flask import request, jsonify, Response
-from dbclient import WriteFailedError
-from image import ImageWrapper, OpenImageException
-from init import app, beans
+from .lib.dbclient import WriteFailedError
+from .lib.image import ImageWrapper, OpenImageException
+from .init import app, beans
+from .tasks import async_upload_to_bdyun
 
 
 @app.after_request
@@ -18,7 +19,9 @@ def upload():
     image = request.files.get('image')
     sizes = [xy.split('x') for xy in size_str.split(',') if xy]
     ident = request.form.get('ident', '').strip()
+    callback = request.form.get('callback', '').strip()
 
+    app.logger.debug('callback %s', callback)
     try:
         im = ImageWrapper(image)
     except OpenImageException:
@@ -37,6 +40,24 @@ def upload():
         beans.set_image(ident, im, sizes)
     except WriteFailedError as e:
         return error('Save to beansdb error: %s' % e)
+
+    async_upload_to_bdyun.delay(ident, sizes, callback=callback)
+    return ok({'ident': ident, 'sizes': sizes})
+
+
+@app.route('/image/<ident>.jpg', methods=['POST'])
+def resize_image(ident):
+    size_str = request.form.get('sizes', '').strip()
+    sizes = [xy.split('x') for xy in size_str.split(',') if xy]
+    callback = request.form.get('callback', '').strip()
+
+    app.logger.debug('callback %s', callback)
+    try:
+        beans.resize_image(ident, sizes)
+    except (WriteFailedError, OpenImageException) as e:
+        return error(e)
+
+    async_upload_to_bdyun.delay(ident, sizes, callback=callback)
     return ok({'ident': ident, 'sizes': sizes})
 
 
@@ -63,17 +84,6 @@ def pic_shows(ident):
     width = request.args.get('width')
     height = request.args.get('height')
     return pic_show(width, height, ident)
-
-
-@app.route('/image/<ident>.jpg', methods=['POST'])
-def resize_image(ident):
-    size_str = request.form.get('sizes', '').strip()
-    sizes = [xy.split('x') for xy in size_str.split(',') if xy]
-    try:
-        beans.resize_image(ident, sizes)
-    except (WriteFailedError, OpenImageException) as e:
-        return error(e)
-    return ok({'ident': ident, 'sizes': sizes})
 
 
 def ok(res):

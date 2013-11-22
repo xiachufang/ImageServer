@@ -1,19 +1,29 @@
-from celery import Celery
-from functions import optimize_pic as _optimize_pic
-
-
-BROKER_URL = 'redis://localhost/0'
-celery = Celery(
-    'celery',
-    broker=BROKER_URL,
-)
-
-celery.conf.update(
-    CELERY_IGNORE_RESULT=True,
-    CELERY_DISABLE_RATE_LIMITS=True,
-)
+from urllib import unquote
+from celery.task.http import URL
+from .init import celery, beans, bdyun
 
 
 @celery.task
-def optimize_pic(picpath):
-    _optimize_pic(picpath)
+def async_upload_to_bdyun(ident, sizes=[], callback=''):
+    for w, h in sizes:
+        im = beans.get_image(ident, w, h)
+        path = bdyun_path(ident, w, h)
+        ret = bdyun.put_object(path, im.to_string())
+        if not ret:
+            print 'Sync pic', path, 'failed!'
+            return
+        print 'Sync pic', path, w, h
+
+    print 'callback', unquote(callback)
+    if callback:
+        URL(unquote(callback)).post_async(
+            ident=ident,
+            sizes=sizes,
+        )
+
+
+def bdyun_path(ident, width=None, height=None):
+    if width:
+        return '/image/{}/{}.jpg'.format(width, ident)
+
+    return '/image/{}.jpg'.format(ident)
