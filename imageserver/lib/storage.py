@@ -61,7 +61,7 @@ class BeansStorage(BaseStorage):
         return ImageWrapper(self.get(ident_))
 
     def resize_image(self, ident, sizes=[]):
-        im = self.get(ident)
+        im = self.get_image(ident)
         return self._resize_image(ident, im, sizes)
 
     def _resize_image(self, ident, im, sizes=[]):
