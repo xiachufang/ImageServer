@@ -33,3 +33,7 @@ nosetests.xml
 .project
 .pydevproject
 config.py
+
+include
+lib
+local
