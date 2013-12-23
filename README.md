@@ -2,8 +2,11 @@ ImageServer
 ===========
 Dependencies
 -----------
-ImageServer depends on `flask`, `celery`, `redis`, `PIL` and `Beansdb`. You should make sure those components avaliable before using ImageServer.
+ImageServer depends on `flask`, `celery`, `redis`, `PIL`, `memcache` and `Beansdb`. You should make sure those components avaliable before using ImageServer.
 
+```bash
+pip install -f requirements.txt
+```
 
 Run
 -------
