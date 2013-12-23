@@ -5,7 +5,7 @@ Dependencies
 ImageServer depends on `flask`, `celery`, `redis`, `PIL`, `memcache` and `Beansdb`. You should make sure those components avaliable before using ImageServer.
 
 ```bash
-pip install -f requirements.txt
+pip install -r requirements.txt
 ```
 
 Run
@@ -23,7 +23,7 @@ Run
 
     Run the following commands in the directory of ImageServer.
 
-        $ python -m simpleserver.app
+        $ python run.py
 
     If you want ImageServer to auto synchronise your images to BaiduYun, start celery first. Run the command in a new shell.
 
