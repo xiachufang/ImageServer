@@ -73,3 +73,35 @@ API
             },
             "status": "ok"
         }
+
+
+Performance Tuning
+-------------------
+Add the following config to your nginx config. Nginx will cache the images.
+
+```nginx
+proxy_cache_path /var/www/cache levels=1:2 keys_zone=imageservice:10m max_size=1g inactive=24h;
+proxy_temp_path /var/www/cache/tmp;
+log_format imageservice
+    '$remote_addr '
+    '"$request" $status $bytes_sent '
+    '"$http_referer" "$http_user_agent" "$gzip_ratio" '
+    '$upstream_addr $upstream_cache_status';
+
+
+server {
+    listen 8000;
+
+    location / {
+        proxy_pass http://localhost:8001;
+    }
+
+    location /image {
+        proxy_pass http://localhost:8001;
+        proxy_cache imageservice;
+        proxy_cache_valid 200 1d;
+        access_log /var/log/nginx/imageservice.log imageservice;
+    }
+
+}
+```
