@@ -34,3 +34,6 @@ class DevelopmentConfig(BaseConfig):
         'sk': 'secret token',
         'bucket': 'bucket',
     }
+
+
+Config = DevelopmentConfig

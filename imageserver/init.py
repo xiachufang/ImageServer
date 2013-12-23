@@ -8,8 +8,7 @@ from .lib.bdyun import BaiduYun
 
 
 app = Flask(__name__)
-app.config.from_object('%s.config.DevelopmentConfig' % MODULE_NAME)
-# app.config.from_object('%s.config.ProductionConfig' % MODULE_NAME)
+app.config.from_object('%s.config.Config' % MODULE_NAME)
 
 beans_conn = Beansdb(app.config['BEANSDBCFG'], 16)
 beans = BeansStorage(beans_conn, app.config['HEIGHT_IN_IDENT'], logger=app.logger)
