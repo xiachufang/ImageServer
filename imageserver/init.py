@@ -1,10 +1,10 @@
 #coding: utf8
 from flask import Flask
-from celery import Celery
 from .config import MODULE_NAME
 from .lib.dbclient import Beansdb
 from .lib.storage import BeansStorage
 from .lib.bdyun import BaiduYun
+from .celery import celery  # noqa
 
 
 app = Flask(__name__)
@@ -17,20 +17,4 @@ bdyun = BaiduYun(
     ak=app.config['BAIDUYUN']['ak'],
     sk=app.config['BAIDUYUN']['sk'],
     bucket=app.config['BAIDUYUN']['bucket'],
-)
-
-celery = Celery(
-    'celery',
-    broker=app.config['REDIS_SERVER'],
-    include=(
-        '%s.tasks' % MODULE_NAME,
-        'celery.task.http',
-    ),
-)
-
-celery.conf.update(
-    CELERY_IGNORE_RESULT=True,
-    CELERY_DISABLE_RATE_LIMITS=True,
-    CELERY_ACKS_LATE=True,
-    CELERY_ACCEPT_CONTENT = ['json'],
 )
