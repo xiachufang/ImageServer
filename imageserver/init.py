@@ -4,7 +4,7 @@ from .config import MODULE_NAME
 from .lib.dbclient import Beansdb
 from .lib.storage import BeansStorage
 from .lib.bdyun import BaiduYun
-from .celery import celery  # noqa
+from .init_celery import celery  # noqa
 
 
 app = Flask(__name__)
