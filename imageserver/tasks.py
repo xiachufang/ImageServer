@@ -12,9 +12,7 @@ def async_upload_to_bdyun(ident, sizes=[], callback=''):
         if not ret:
             print 'Sync pic', path, 'failed!'
             return
-        print 'Sync pic', path, w, h
 
-    print 'callback', unquote(callback)
     if callback:
         URL(unquote(callback)).post_async(
             ident=ident,
