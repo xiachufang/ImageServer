@@ -31,4 +31,6 @@ celery = Celery(
 celery.conf.update(
     CELERY_IGNORE_RESULT=True,
     CELERY_DISABLE_RATE_LIMITS=True,
+    CELERY_ACKS_LATE=True,
+    CELERY_ACCEPT_CONTENT = ['json'],
 )
