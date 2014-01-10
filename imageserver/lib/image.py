@@ -4,13 +4,11 @@ from cStringIO import StringIO
 
 
 class OpenImageException(Exception):
-    def __init__(self, msg):
-        self.msg = msg
+    pass
 
 
 class ResizeImageException(Exception):
-    def __init__(self, msg):
-        self.msg = msg
+    pass
 
 
 class ImageWrapper(object):

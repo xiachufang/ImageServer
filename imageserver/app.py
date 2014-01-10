@@ -55,7 +55,7 @@ def resize_image(ident):
     try:
         beans.resize_image(ident, sizes)
     except (WriteFailedError, OpenImageException) as e:
-        return error(e)
+        return error('Resize image error: %r' % e)
 
     async_upload_to_bdyun.delay(ident, sizes, callback=callback)
     return ok({'ident': ident, 'sizes': sizes})
