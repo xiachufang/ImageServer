@@ -37,7 +37,47 @@ API
 
         Form:
           image: Image string
+          sizes(optional): 100x50,150x<60 (widthxheight or widthx<height)
+          ident(optional): the ident to upload to
+          callback: after syncing to bdyun, GET callback
+          sync: whether sync to baiduyun
+
+        Response:
+        {
+            "content": {
+                "ident": "1c449b644ab111e3937900163e200a0a",
+                "sizes": [
+                    ["100", "50"],
+                    ["150", "<60"]
+                ]
+            },
+            "status": "ok"
+        }
+
+* `POST /sync/<ident>.jpg` Sync image
+
+        Form:
+          sizes(optional): 100x50,150x<60 (widthxheight or widthx<height)
+          callback: after syncing to bdyun, GET callback
+
+        Response:
+        {
+            "content": {
+                "ident": "1c449b644ab111e3937900163e200a0a",
+                "sizes": [
+                    ["100", "50"],
+                    ["150", "<60"]
+                ]
+            },
+            "status": "ok"
+        }
+
+* `POST /resize/<ident>.jpg` Resize image
+
+        Form:
           sizes(optional): 100x50,150x<60
+          callback: after syncing to bdyun, GET callback
+          sync: true or false
 
           widthxheight or widthx<height
 
@@ -58,25 +98,6 @@ API
         /image/1c449b644ab111e3937900163e200a0a.jpg?width=50&height=0
         /image/1c449b644ab111e3937900163e200a0a.jpg?width=50&height=<50
         /image/1c449b644ab111e3937900163e200a0a.jpg
-
-* `POST /image/<ident>.jpg` Resize image
-
-        Form:
-          sizes(optional): 100x50,150x<60
-
-          widthxheight or widthx<height
-
-        Response:
-        {
-            "content": {
-                "ident": "1c449b644ab111e3937900163e200a0a",
-                "sizes": [
-                    ["100", "50"],
-                    ["150", "<60"]
-                ]
-            },
-            "status": "ok"
-        }
 
 
 Performance Tuning

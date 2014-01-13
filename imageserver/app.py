@@ -20,6 +20,7 @@ def upload():
     sizes = [xy.split('x') for xy in size_str.split(',') if xy]
     ident = request.form.get('ident', '').strip()
     callback = request.form.get('callback', '').strip()
+    sync = request.form.get('sync', 'true').strip()
 
     app.logger.debug('callback %s', callback)
     try:
@@ -41,15 +42,19 @@ def upload():
     except WriteFailedError as e:
         return error('Save to beansdb error: %s' % e)
 
-    async_upload_to_bdyun.delay(ident, sizes, callback=callback)
+    app.logger.debug('sync: %s', sync)
+    if sync == 'true':
+        async_upload_to_bdyun.delay(ident, sizes, callback=callback)
+
     return ok({'ident': ident, 'sizes': sizes})
 
 
-@app.route('/image/<ident>.jpg', methods=['POST'])
+@app.route('/resize/<ident>.jpg', methods=['POST'])
 def resize_image(ident):
     size_str = request.form.get('sizes', '').strip()
     sizes = [xy.split('x') for xy in size_str.split(',') if xy]
     callback = request.form.get('callback', '').strip()
+    sync = request.form.get('sync', 'true').strip()
 
     app.logger.debug('callback %s', callback)
     try:
@@ -57,7 +62,21 @@ def resize_image(ident):
     except (WriteFailedError, OpenImageException) as e:
         return error('Resize image error: %r' % e)
 
+    if sync == 'true':
+        async_upload_to_bdyun.delay(ident, sizes, callback=callback)
+
+    return ok({'ident': ident, 'sizes': sizes})
+
+
+@app.route('/sync/<ident>.jpg', methods=['POST'])
+def sync_image(ident):
+    size_str = request.form.get('sizes', '').strip()
+    sizes = [xy.split('x') for xy in size_str.split(',') if xy]
+    callback = request.form.get('callback', '').strip()
+
+    app.logger.debug('callback %s', callback)
     async_upload_to_bdyun.delay(ident, sizes, callback=callback)
+
     return ok({'ident': ident, 'sizes': sizes})
 
 
