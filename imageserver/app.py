@@ -49,6 +49,7 @@ def upload():
     return ok({'ident': ident, 'sizes': sizes})
 
 
+@app.route('/image/<ident>.jpg', methods=['POST'])
 @app.route('/resize/<ident>.jpg', methods=['POST'])
 def resize_image(ident):
     size_str = request.form.get('sizes', '').strip()
