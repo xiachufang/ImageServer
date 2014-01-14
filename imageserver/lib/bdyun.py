@@ -47,7 +47,7 @@ class BaiduYun(object):
         headers['Content-Length'] = str(len(raw))
         headers['x-bs-acl'] = 'public-read'
         expire = datetime.now() + timedelta(days=100000)
-        headers['Expires'] = expire.strftime("%a, %d-%b-%Y %H:%M:%S GMT")
+        headers['Expires'] = expire.strftime("%a, %d %b %Y %H:%M:%S GMT")
 
         page = requests.put(url, data=raw, headers=headers)
         return page.status_code == 200
