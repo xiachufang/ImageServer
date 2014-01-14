@@ -1,6 +1,8 @@
 #coding:utf-8
 import Image
+import ImageFile
 from cStringIO import StringIO
+from exceptions import IOError
 
 
 class OpenImageException(Exception):
@@ -286,5 +288,9 @@ def pic_square(im, width, top_left=None, size=0, zoom_out=True):
 def img2str(image, quality=75, progressive=True):
     f = StringIO()
     image = image.convert('RGB')
-    image.save(f, 'JPEG', quality=quality, optimize=True, progressive=progressive)
+    try:
+        image.save(f, 'JPEG', quality=quality, optimize=True, progressive=progressive)
+    except IOError:
+        ImageFile.MAXBLOCK = image.size[0] * image.size[1]
+        image.save(f, 'JPEG', quality=quality, optimize=True, progressive=progressive)
     return f.getvalue()
