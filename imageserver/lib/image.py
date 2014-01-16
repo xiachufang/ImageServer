@@ -20,7 +20,7 @@ class ImageWrapper(object):
     def __getattr__(self, k):
         return getattr(self.im, k)
 
-    def to_string(self, quality=75):
+    def to_string(self, quality=80):
         return img2str(self.im, quality=quality)
 
     def resize_to(self, width, height=None):
@@ -285,7 +285,7 @@ def pic_square(im, width, top_left=None, size=0, zoom_out=True):
     return im
 
 
-def img2str(image, quality=75, progressive=True):
+def img2str(image, quality=85, progressive=True):
     f = StringIO()
     image = image.convert('RGB')
     try:

@@ -48,7 +48,7 @@ class BeansStorage(BaseStorage):
         sizes: 100x50,200x200,300x0,150x<100
         '''
         # save the original image
-        self.set(ident, im.to_string())
+        self.set(ident, im.to_string(quality=85))
         self.logger.debug('Beans set %s', ident)
         if sizes:
             self._resize_image(ident, im, sizes)
@@ -69,6 +69,6 @@ class BeansStorage(BaseStorage):
             # save different sizes of images
             computed_ident = self.compute_ident(ident, w, h)
             temp_im = im.resize_to(w, h)
-            self.set(computed_ident, temp_im.to_string())
+            self.set(computed_ident, temp_im.to_string(quality=85))
             self.logger.debug('Beans set %s @%sx%s', computed_ident, w, h)
         return ident
