@@ -30,10 +30,11 @@ class BaseStorage(object):
 
 
 class BeansStorage(BaseStorage):
-    def __init__(self, conn, height_in_ident=False, logger=None):
+    def __init__(self, conn, height_in_ident=False, logger=None, quality=90):
         self.conn = conn
         self.height_in_ident = height_in_ident
         self.logger = logger or Null
+        self.quality = quality
 
     def set(self, key, value):
         return self.conn.set(key, value)
@@ -48,7 +49,7 @@ class BeansStorage(BaseStorage):
         sizes: 100x50,200x200,300x0,150x<100
         '''
         # save the original image
-        self.set(ident, im.to_string(quality=85))
+        self.set(ident, im.to_string(quality=95))
         self.logger.debug('Beans set %s', ident)
         if sizes:
             self._resize_image(ident, im, sizes)
@@ -69,6 +70,6 @@ class BeansStorage(BaseStorage):
             # save different sizes of images
             computed_ident = self.compute_ident(ident, w, h)
             temp_im = im.resize_to(w, h)
-            self.set(computed_ident, temp_im.to_string(quality=85))
+            self.set(computed_ident, temp_im.to_string(quality=self.quality))
             self.logger.debug('Beans set %s @%sx%s', computed_ident, w, h)
         return ident

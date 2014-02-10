@@ -20,6 +20,7 @@ class ProductionConfig(BaseConfig):
         'sk': 'secret token',
         'bucket': 'bucket',
     }
+    IMAGE_QUALITY = 90
 
 
 class DevelopmentConfig(BaseConfig):
@@ -34,6 +35,7 @@ class DevelopmentConfig(BaseConfig):
         'sk': 'secret token',
         'bucket': 'bucket',
     }
+    IMAGE_QUALITY = 90
 
 
 Config = DevelopmentConfig
