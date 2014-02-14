@@ -52,7 +52,7 @@ class BeansStorage(BaseStorage):
         self.set(ident, im.to_string(quality=95))
         self.logger.debug('Beans set %s', ident)
         if sizes:
-            self._resize_image(ident, im, sizes)
+            self._resize_image(ident, ImageWrapper(im=im), sizes)
 
         return ident
 

@@ -14,13 +14,21 @@ class ResizeImageException(Exception):
 
 
 class ImageWrapper(object):
-    def __init__(self, im):
-        self.im = picopen(im)
+    def __init__(self, im_str=None, im=None):
+        '''
+            im_str: image string
+            im: Image object
+        '''
+        self.im = im or picopen(im_str)
+        self.im_str = im_str
 
     def __getattr__(self, k):
         return getattr(self.im, k)
 
-    def to_string(self, quality=80):
+    def to_string(self, quality=100):
+        if quality == 100:
+            return self.im_str or img2str(self.im, quality=95)
+
         return img2str(self.im, quality=quality)
 
     def resize_to(self, width, height=None):
@@ -32,7 +40,7 @@ class ImageWrapper(object):
         else:
             h = int(height)
 
-        return ImageWrapper(resize_to(self.im, w, h, max_height))
+        return ImageWrapper(im=resize_to(self.im, w, h, max_height))
 
 
 def picopen(image):
