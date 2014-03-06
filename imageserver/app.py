@@ -1,3 +1,4 @@
+import hmac
 from flask import request, jsonify, Response
 from .lib.dbclient import WriteFailedError
 from .lib.image import ImageWrapper, OpenImageException
@@ -81,29 +82,43 @@ def sync_image(ident):
     return ok({'ident': ident, 'sizes': sizes})
 
 
-@app.route('/image/<width>/<height>/<ident>.jpg')
-def pic_show(width, height, ident):
-    ident_ = beans.compute_ident(ident, width, height)
+@app.route('/image/<width>/<height>/<sign>/<ident>.jpg')
+def pic_show(width, height, sign, ident):
+    '''Get corresponding image for ident. If not exist, generate one.'''
+    ident_ = beans.compute_ident(ident, width)
     if not ident_:
         return error('Image corresponding to %s@%sx%s doesn\'t exist!' % (ident, width, height))
     app.logger.debug('Beans get: %s', ident_)
     image_binary = beans.get(ident_)
     if not image_binary:
-        return error('Image corresponding to %s@%sx%s doesn\'t exist!' % (ident, width, height))
+        app.logger.debug('%s not exists', ident_)
+        if not height:
+            # no height provided, return error
+            return error('Image corresponding to %s@%sx%s doesn\'t exist!' % (ident, width, height))
+
+        msg = 'image%s%s%s' % (width, height, ident)
+        sign_verify = hmac.new(app.config['IMAGE_KEY'], msg).hexdigest().upper()
+        app.logger.debug('Signature: %s', sign_verify)
+        # if sign != sign_verify:
+        #     return error('Signature error')
+        img_strs = beans.resize_image(ident, [(width, height)])
+        if img_strs:
+            image_binary = img_strs[0]
+
     return Response(image_binary, mimetype='image/jpeg')
 
 
 @app.route('/image/<width>/<ident>.jpg')
 def pic_show3(width, ident):
-    return pic_show(width, None, ident)
+    return pic_show(width, None, None, ident)
 
 
 @app.route('/image/<ident>.jpg')
-def pic_shows(ident):
+def pic_show2(ident):
     '''width and height are in query parameters'''
     width = request.args.get('width')
     height = request.args.get('height')
-    return pic_show(width, height, ident)
+    return pic_show(width, height, None, ident)
 
 
 def ok(res):

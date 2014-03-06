@@ -11,7 +11,7 @@ app = Flask(__name__)
 app.config.from_object('%s.config.Config' % MODULE_NAME)
 
 beans_conn = Beansdb(app.config['BEANSDBCFG'], 16)
-beans = BeansStorage(beans_conn, app.config['HEIGHT_IN_IDENT'], logger=app.logger, quality=app.config['IMAGE_QUALITY'])
+beans = BeansStorage(beans_conn, logger=app.logger, quality=app.config['IMAGE_QUALITY'])
 
 bdyun = BaiduYun(
     ak=app.config['BAIDUYUN']['ak'],

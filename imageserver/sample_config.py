@@ -5,7 +5,7 @@ MODULE_NAME = os.path.dirname(os.path.abspath(__file__)).split('/')[-1]
 
 
 class BaseConfig(object):
-    HEIGHT_IN_IDENT = False
+    pass
 
 
 class ProductionConfig(BaseConfig):
@@ -21,6 +21,7 @@ class ProductionConfig(BaseConfig):
         'bucket': 'bucket',
     }
     IMAGE_QUALITY = 90
+    IMAGE_KEY = '6d98a7186f1173b945add7f40cd28a85'
 
 
 class DevelopmentConfig(BaseConfig):
@@ -36,6 +37,7 @@ class DevelopmentConfig(BaseConfig):
         'bucket': 'bucket',
     }
     IMAGE_QUALITY = 90
+    IMAGE_KEY = '976da248917d92669d5eae619b2f43e7'
 
 
 Config = DevelopmentConfig

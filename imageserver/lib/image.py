@@ -25,9 +25,12 @@ class ImageWrapper(object):
     def __getattr__(self, k):
         return getattr(self.im, k)
 
+    def __nonzero__(self):
+        return bool(self.im or self.im_str)
+
     def to_string(self, quality=100):
         if quality == 100:
-            return self.im_str or img2str(self.im, quality=95)
+            return self.im_str or img2str(self.im, quality=99)
 
         return img2str(self.im, quality=quality)
 
