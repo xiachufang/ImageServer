@@ -99,8 +99,8 @@ def pic_show(width, height, sign, ident):
         msg = 'image%s%s%s' % (width, height, ident)
         sign_verify = hmac.new(app.config['IMAGE_KEY'], msg).hexdigest().upper()
         app.logger.debug('Signature: %s', sign_verify)
-        # if sign != sign_verify:
-        #     return error('Signature error')
+        if sign != sign_verify:
+            return error('Signature error')
         img_strs = beans.resize_image(ident, [(width, height)])
         if img_strs:
             image_binary = img_strs[0]
