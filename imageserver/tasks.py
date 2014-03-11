@@ -6,7 +6,7 @@ from .init import celery, beans, bdyun
 @celery.task
 def async_upload_to_bdyun(ident, sizes=[], callback=''):
     for w, h in sizes:
-        im = beans.get_image(ident, w, h)
+        im = beans.get_image(ident, w)
         path = bdyun_path(ident, w, h)
         ret = bdyun.put_object(path, im.to_string())
         if not ret:
