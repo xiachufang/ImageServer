@@ -15,12 +15,13 @@ class ProductionConfig(BaseConfig):
     }
     DEBUG = False
     REDIS_SERVER = 'redis://localhost/0'
-    BAIDUYUN = {
-        'ak': 'access token',
-        'sk': 'secret token',
-        'bucket': 'bucket',
-    }
     IMAGE_QUALITY = 90
+
+    QINIUCFG = {
+        'access_key': '',
+        'secret_key': '',
+        'bucket': '',
+    }
 
 
 class DevelopmentConfig(BaseConfig):
@@ -30,12 +31,11 @@ class DevelopmentConfig(BaseConfig):
     }
     DEBUG = True
     REDIS_SERVER = 'redis://localhost/3'
-    BAIDUYUN = {
-        'ak': 'access token',
-        'sk': 'secret token',
-        'bucket': 'bucket',
-    }
     IMAGE_QUALITY = 90
-
+    QINIUCFG = {
+        'access_key': '',
+        'secret_key': '',
+        'bucket': '',
+    }
 
 Config = DevelopmentConfig

@@ -2,7 +2,7 @@ from flask import request, jsonify, Response
 from .lib.dbclient import WriteFailedError
 from .lib.image import ImageWrapper, OpenImageException
 from .init import app, beans
-from .tasks import async_upload_to_bdyun
+from .tasks import async_upload_to_cloud
 
 
 @app.after_request
@@ -44,7 +44,7 @@ def upload():
 
     app.logger.debug('sync: %s', sync)
     if sync == 'true':
-        async_upload_to_bdyun.delay(ident, sizes, callback=callback)
+        async_upload_to_cloud.delay(ident, sizes, callback=callback)
 
     return ok({'ident': ident, 'sizes': sizes})
 
@@ -64,7 +64,7 @@ def resize_image(ident):
         return error('Resize image error: %r' % e)
 
     if sync == 'true':
-        async_upload_to_bdyun.delay(ident, sizes, callback=callback)
+        async_upload_to_cloud.delay(ident, sizes, callback=callback)
 
     return ok({'ident': ident, 'sizes': sizes})
 
@@ -76,7 +76,7 @@ def sync_image(ident):
     callback = request.form.get('callback', '').strip()
 
     app.logger.debug('callback %s', callback)
-    async_upload_to_bdyun.delay(ident, sizes, callback=callback)
+    async_upload_to_cloud.delay(ident, sizes, callback=callback)
 
     return ok({'ident': ident, 'sizes': sizes})
 
