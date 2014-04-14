@@ -19,7 +19,7 @@ def async_upload_to_cloud(ident, sizes=[], callback=''):
         path = qiniu_path(ident, w, h)
         upload_to_qiniu(path, im.to_string())
 
-    # feedback(callback, ident, sizes)
+    feedback(callback, ident, sizes)
 
 
 def upload_to_qiniu(path, data):
