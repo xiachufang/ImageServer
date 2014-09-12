@@ -85,11 +85,11 @@ def sync_image(ident):
 def pic_show(width, height, ident):
     ident_ = beans.compute_ident(ident, width, height)
     if not ident_:
-        return error('Image corresponding to %s@%sx%s doesn\'t exist!' % (ident, width, height))
+        return error('Image corresponding to %s@%sx%s doesn\'t exist!' % (ident, width, height), status_code=404)
     app.logger.debug('Beans get: %s', ident_)
     image_binary = beans.get(ident_)
     if not image_binary:
-        return error('Image corresponding to %s@%sx%s doesn\'t exist!' % (ident, width, height))
+        return error('Image corresponding to %s@%sx%s doesn\'t exist!' % (ident, width, height), status_code=404)
     return Response(image_binary, mimetype='image/jpeg')
 
 
@@ -113,8 +113,8 @@ def ok(res):
     })
 
 
-def error(res):
+def error(res, status_code=400):
     return jsonify({
         'status': 'error',
         'content': res,
-    })
+    }), status_code

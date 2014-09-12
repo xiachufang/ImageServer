@@ -22,7 +22,6 @@ class BaseStorage(object):
         if self.height_in_ident:
             if height and width:
                 return '%s@%sx%s' % (ident, width, height)
-            return ''
 
         if width:
             return '%s@%s' % (ident, width)
