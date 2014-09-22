@@ -23,6 +23,8 @@ class ProductionConfig(BaseConfig):
         'bucket': '',
     }
 
+    SENTRY_DSN = ''
+
 
 class DevelopmentConfig(BaseConfig):
     BEANSDBCFG = {
@@ -37,5 +39,7 @@ class DevelopmentConfig(BaseConfig):
         'secret_key': '',
         'bucket': '',
     }
+    SENTRY_DSN = ''
+
 
 Config = DevelopmentConfig
