@@ -1,6 +1,5 @@
 #coding:utf-8
-import Image
-import ImageFile
+from PIL import Image, ImageFile
 from cStringIO import StringIO
 from exceptions import IOError
 
@@ -295,7 +294,6 @@ def pic_square(im, width, top_left=None, size=0, zoom_out=True):
 
 def img2str(image, quality=85, progressive=True):
     f = StringIO()
-    image = image.convert('RGB')
     try:
         image.save(f, 'JPEG', quality=quality, optimize=True, progressive=progressive)
     except IOError:
