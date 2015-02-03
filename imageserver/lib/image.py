@@ -1,5 +1,5 @@
 #coding:utf-8
-from PIL import Image, ImageFile
+from PIL import Image, ImageFile, ExifTags
 from cStringIO import StringIO
 from exceptions import IOError
 
@@ -55,6 +55,25 @@ def picopen(image):
             im = Image.open(image) # file-like object
         except IOError as e:
             raise OpenImageException(e)
+
+    # 根据 EXIF 的 Orientation 信息旋转图片，PIL 的 rotate 方法是逆时针方向的
+    orientation = 1
+    for k, v in im._getexif().items():
+        if ExifTags.TAGS.get(k) == "Orientation":
+            orientation = v
+            break
+
+    # EXIF 的 Orientation 对应的图片方向可以参考
+    # http://www.daveperrett.com/articles/2012/07/28/exif-orientation-handling-is-a-ghetto/
+    # 逆时针 270°
+    if orientation in (5, 6):
+        im = im.rotate(270)
+    # 逆时针 180°
+    elif orientation in (3, 4):
+        im = im.rotate(180)
+    # 逆时针 90°
+    elif orientation in (7, 8):
+        im = im.rotate(90)
 
     if im.mode == 'RGBA':
         p = Image.new('RGBA', im.size, 'white')
