@@ -56,24 +56,28 @@ def picopen(image):
         except IOError as e:
             raise OpenImageException(e)
 
-    # 根据 EXIF 的 Orientation 信息旋转图片，PIL 的 rotate 方法是逆时针方向的
-    orientation = 1
-    for k, v in im._getexif().items():
-        if ExifTags.TAGS.get(k) == "Orientation":
-            orientation = v
-            break
+    # 根据 EXIF 的 Orientation 信息旋转图片（http://www.daveperrett.com/articles/2012/07/28/exif-orientation-handling-is-a-ghetto/）
+    # 在后续处理过程中，picopen 调用过程中产生的 im 对象可能没有 _getexif 方法，如果没有 _getexif 方法则无法获取
+    # EXIF 信息，也就无法调整图片的方向
+    if hasattr(im, "_getexif"):
+        # 默认图片方向
+        orientation = 1
 
-    # EXIF 的 Orientation 对应的图片方向可以参考
-    # http://www.daveperrett.com/articles/2012/07/28/exif-orientation-handling-is-a-ghetto/
-    # 逆时针 270°
-    if orientation in (5, 6):
-        im = im.rotate(270)
-    # 逆时针 180°
-    elif orientation in (3, 4):
-        im = im.rotate(180)
-    # 逆时针 90°
-    elif orientation in (7, 8):
-        im = im.rotate(90)
+        for k, v in im._getexif().items():
+            if ExifTags.TAGS.get(k) == "Orientation":
+                orientation = v
+                break
+
+        # PIL 的 rotate 方法是逆时针方向的
+        # 逆时针 270°
+        if orientation in (5, 6):
+            im = im.rotate(270)
+        # 逆时针 180°
+        elif orientation in (3, 4):
+            im = im.rotate(180)
+        # 逆时针 90°
+        elif orientation in (7, 8):
+            im = im.rotate(90)
 
     if im.mode == 'RGBA':
         p = Image.new('RGBA', im.size, 'white')
