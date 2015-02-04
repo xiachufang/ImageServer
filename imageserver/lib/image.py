@@ -63,21 +63,25 @@ def picopen(image):
         # 默认图片方向
         orientation = 1
 
-        for k, v in im._getexif().items():
-            if ExifTags.TAGS.get(k) == "Orientation":
-                orientation = v
-                break
-
-        # PIL 的 rotate 方法是逆时针方向的
-        # 逆时针 270°
-        if orientation in (5, 6):
-            im = im.rotate(270)
-        # 逆时针 180°
-        elif orientation in (3, 4):
-            im = im.rotate(180)
-        # 逆时针 90°
-        elif orientation in (7, 8):
-            im = im.rotate(90)
+        try:
+            # _getexif() 可能返回 None
+            exif = im._getexif() or {}
+            for k, v in exif.items():
+                if ExifTags.TAGS.get(k) == "Orientation":
+                    orientation = v
+                    break
+            # PIL 的 rotate 方法是逆时针方向的
+            # 逆时针 270°
+            if orientation in (5, 6):
+                im = im.rotate(270)
+            # 逆时针 180°
+            elif orientation in (3, 4):
+                im = im.rotate(180)
+            # 逆时针 90°
+            elif orientation in (7, 8):
+                im = im.rotate(90)
+        except Exception:
+            pass
 
     if im.mode == 'RGBA':
         p = Image.new('RGBA', im.size, 'white')
