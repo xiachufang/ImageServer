@@ -27,6 +27,9 @@ class MCStore(object):
     def __str__(self):
         return self.server
 
+    def reopen(self):
+        self.mc = Client([self.server])
+
     def set(self, key, data, rev=0):
         return bool(self.mc.set(key, data, rev))
 
@@ -69,6 +72,10 @@ class Beansdb(object):
         self.N = N
         self.W = W
         self.R = R
+
+    def reopen(self):
+        for server in self.servers.values():
+            server.reopen()
 
     def print_buckets(self):
         for i, ss in enumerate(self.buckets):

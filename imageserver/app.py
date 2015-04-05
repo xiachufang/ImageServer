@@ -25,8 +25,8 @@ def upload():
     app.logger.debug('callback %s', callback)
     try:
         im = ImageWrapper(image)
-    except OpenImageException:
-        return error('Not a valid image!')
+    except OpenImageException as e:
+        return error(str(e))
 
     if ident:
         # Data contained in the key might be huge, so get the corresponing meta data.
