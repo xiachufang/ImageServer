@@ -110,7 +110,6 @@ def picopen(image):
 
 
 def resize_to(im, width, height=None, max_height=None):
-    im = picopen(im)
     if not width:
         raise ResizeImageException('Width can not be empty')
 
